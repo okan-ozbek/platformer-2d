@@ -1,21 +1,18 @@
-using UnityEditor.UIElements;
+using System;
 using UnityEngine;
 
-[RequireComponent(
-    typeof(Rigidbody2D),
-    typeof(BoxCollider2D)
-)]
+[RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
 public class PlayerController : MonoBehaviour
 {
-    public LayerMask environmentLayerMask;
-    
     private Rigidbody2D _rigidbody2D;
     private BoxCollider2D _boxCollider2D;
 
-    private Vector2 _movementDirection;
-    private bool _jumped;
-    private bool _running;
+    [SerializeField] private float speed;
+    [SerializeField] private float maxSpeed;
 
+    private float _horizontalInputDirection;
+    private bool _hasJumped;
+    
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
@@ -24,28 +21,31 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        _movementDirection = new Vector2(Input.GetAxisRaw("Horizontal"), 0.0f);
-        _jumped = Input.GetKey(KeyCode.Space);
-        _running = Input.GetKey(KeyCode.LeftShift);
-        
-        float speed = (_running) ? 15.0f : 10.0f;
-        transform.Translate(Vector3.right * _movementDirection * speed * Time.deltaTime);
+        _horizontalInputDirection = Input.GetAxisRaw("Horizontal");
+        _hasJumped = Input.GetKey(KeyCode.Space);
     }
 
     private void FixedUpdate()
     {
-
-        if (_jumped && OnGround())
-        {
-            _rigidbody2D.AddForce(Vector2.up * 2.0f, ForceMode2D.Impulse);
-        }
+        Movement();
     }
 
-    private bool OnGround()
+    private void Movement()
     {
-        Vector3 position = transform.position;
-        position.y = position.y - transform.localScale.y;
-        
-        return Physics2D.OverlapCircle(position , 0.15f, environmentLayerMask);
+        _rigidbody2D.AddForce(new Vector2(_horizontalInputDirection * speed, 0.0f), ForceMode2D.Force);
+
+        if (_horizontalInputDirection == 0.0f)
+        {
+            _rigidbody2D.drag = 10.0f;
+        }
+
+        var clampedVelocityX = _rigidbody2D.velocity.x;
+        if (Mathf.Abs(_rigidbody2D.velocity.x) > 0.0f)
+        {
+            clampedVelocityX = Mathf.Sign(_rigidbody2D.velocity.x) * maxSpeed;
+        }
+
+        _rigidbody2D.velocity = new Vector2(clampedVelocityX, _rigidbody2D.velocity.y);
+
     }
 }
