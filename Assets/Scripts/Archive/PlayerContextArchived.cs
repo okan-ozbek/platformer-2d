@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
  */
 
 [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
-public class PlayerContext : MonoBehaviour
+public class PlayerContextArchived : MonoBehaviour
 {
     private const float HorizontalDecelerationThreshold = 0.01f;
     private const float GravityFallMultiplier = 2.0f;
@@ -39,10 +39,10 @@ public class PlayerContext : MonoBehaviour
     private bool _canDash = true;
     private bool _isDashing = false;
     
-    private float _coyoteTime = 0.2f;
+    private const float CoyoteTime = 0.2f;
     private float _coyoteTimeCounter;
 
-    private float _jumpBufferTime = 0.1f;
+    private const float JumpBufferTime = 0.1f;
     private float _jumpBufferCounter;
 
     private void Awake()
@@ -73,7 +73,7 @@ public class PlayerContext : MonoBehaviour
         
         if (_pressedJump)
         {
-            _jumpBufferCounter = _jumpBufferTime;
+            _jumpBufferCounter = JumpBufferTime;
         }
         else
         {
@@ -92,7 +92,7 @@ public class PlayerContext : MonoBehaviour
         
         if (Grounded())
         {
-            _coyoteTimeCounter = _coyoteTime;
+            _coyoteTimeCounter = CoyoteTime;
             _canDash = true;
         }
         else
