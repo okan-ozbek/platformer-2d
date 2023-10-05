@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics;
+using UnityEngine;
 using Player.Factory;
+using Debug = UnityEngine.Debug;
 
 namespace Player.States
 {
@@ -13,6 +15,10 @@ namespace Player.States
         
         public override void EnterState()
         {
+            Debug.Log(Context.BaseGravityScale);
+            Debug.Log(PlayerContext.GravityFallMultiplier);
+            Debug.Log(Context.BaseGravityScale * PlayerContext.GravityFallMultiplier);
+            
             Context.SetGravityScale(Context.BaseGravityScale * PlayerContext.GravityFallMultiplier);
         }
 
@@ -33,6 +39,11 @@ namespace Player.States
 
         public override void CheckSwitchStates()
         {
+            if (Context.PlayerApplicable.GroundedState)
+            {
+                SwitchState(StateFactory.Grounded());
+            }
+            
             if (Context.PlayerApplicable.DashState)
             {
                 SwitchState(StateFactory.Dash());

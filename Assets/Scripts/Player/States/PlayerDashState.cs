@@ -10,9 +10,7 @@ namespace Player.States
         }
         
         public override void EnterState()
-        {
-            throw new System.NotImplementedException();
-        }
+        { }
 
         public override void UpdateState()
         {
@@ -20,18 +18,18 @@ namespace Player.States
         }
 
         public override void ExitState()
-        {
-            throw new System.NotImplementedException();
-        }
+        { }
 
         public override void CheckSwitchStates()
         {
-            throw new System.NotImplementedException();
+            if (Context.PlayerApplicable.GroundedState)
+            {
+                SwitchState(StateFactory.Grounded());
+            }
+            
         }
 
         public override void InitializeSubState()
-        {
-            throw new System.NotImplementedException();
-        }
+        { }
     }
 }

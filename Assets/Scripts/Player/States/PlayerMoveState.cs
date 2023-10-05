@@ -8,9 +8,7 @@ namespace Player.States
         public PlayerMoveState(PlayerContext context, PlayerStateFactory stateFactory) : base(context, stateFactory) { }
         
         public override void EnterState()
-        {
-            throw new System.NotImplementedException();
-        }
+        { }
 
         public override void UpdateState()
         {
@@ -29,9 +27,7 @@ namespace Player.States
         }
 
         public override void ExitState()
-        {
-            throw new System.NotImplementedException();
-        }
+        { }
 
         public override void CheckSwitchStates()
         {
@@ -42,8 +38,6 @@ namespace Player.States
         }
 
         public override void InitializeSubState()
-        {
-            throw new System.NotImplementedException();
-        }
+        { }
     }
 }

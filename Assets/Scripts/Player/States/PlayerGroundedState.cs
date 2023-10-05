@@ -1,4 +1,5 @@
 ﻿using Player.Factory;
+using UnityEngine;
 
 namespace Player.States
 {
@@ -13,6 +14,8 @@ namespace Player.States
         public override void EnterState()
         {
             Context.coyoteTimer = PlayerContext.CoyoteTime;
+            
+            Debug.Log("hit");
         }
 
         public override void UpdateState()
@@ -21,9 +24,7 @@ namespace Player.States
         }
 
         public override void ExitState()
-        {
-            throw new System.NotImplementedException();
-        }
+        { }
 
         public override void CheckSwitchStates()
         {

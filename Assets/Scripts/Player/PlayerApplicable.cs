@@ -4,7 +4,12 @@ namespace Player
 {
     public class PlayerApplicable
     {
-        private PlayerContext _context;
+        private readonly PlayerContext _context;
+
+        public PlayerApplicable(PlayerContext context)
+        {
+            _context = context;
+        }
 
         public bool GroundedState => (_context.Grounded());
         public bool FallState => (!_context.Grounded() && _context.rigidbody2D.velocity.y < 0.0f); 

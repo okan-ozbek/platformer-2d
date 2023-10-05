@@ -34,7 +34,7 @@ namespace Player
         public float BaseGravityScale => _baseGravityScale;
         
     
-        public new Rigidbody2D rigidbody2D;
+        public Rigidbody2D rigidbody2D;
 
         [SerializeField] private LayerMask environmentLayer;
         [SerializeField] private float maxHorizontalVelocity = 5.0f;
@@ -57,6 +57,8 @@ namespace Player
         private void Awake()
         {
             rigidbody2D = GetComponent<Rigidbody2D>();
+            PlayerInput = new PlayerInput();
+            PlayerApplicable = new PlayerApplicable(this);
 
             PlayerStateFactory stateFactory = new PlayerStateFactory(this);
         
@@ -67,6 +69,10 @@ namespace Player
         private void Start()
         {
             _baseGravityScale = rigidbody2D.gravityScale;
+            
+            Debug.Log(rigidbody2D.gravityScale);
+            Debug.Log(_baseGravityScale);
+            
             dashParticles.Stop();
         }
 
@@ -74,6 +80,7 @@ namespace Player
         {
             PlayerState.UpdateStates();
             PlayerInput.UpdateInputs();
+            Debug.Log(PlayerInput.InputDirection);
 
             /*
             if (

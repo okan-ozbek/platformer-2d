@@ -33,13 +33,15 @@ namespace Player.States
         }
 
         public override void ExitState()
-        {
-            throw new System.NotImplementedException();
-        }
+        { }
 
         public override void CheckSwitchStates()
         {
-            throw new System.NotImplementedException();
+            if (Context.PlayerApplicable.GroundedState)
+            {
+                SwitchState(StateFactory.Grounded());
+            }
+            
         }
 
         public override void InitializeSubState()
