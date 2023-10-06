@@ -1,44 +1,43 @@
-﻿using Player.Factory;
+using Player.Factories;
 using UnityEngine;
 
 namespace Player.States
 {
-    public class PlayerIdleState : PlayerBaseState
+    public sealed class PlayerIdleState : PlayerBaseState
     {
-        public PlayerIdleState(PlayerContext context, PlayerStateFactory stateFactory) : base(context, stateFactory) { }
-        
-        public override void EnterState()
-        { }
+        public PlayerIdleState(PlayerStateMachine context, PlayerStateFactory factory) : base(context, factory) { }
 
-        public override void UpdateState()
+        protected override void OnEnter()
         {
-            CheckSwitchStates();
             
-            if (Context.velocity.x > 0.0f)
-            {
-                Context.velocity.x -= Context.HorizontalDeceleration * Time.fixedDeltaTime;
-
-                if (Context.velocity.x <= PlayerContext.HorizontalDecelerationThreshold)
-                {
-                    Context.velocity.x = 0.0f;
-                }
-            
-                Context.SetVelocity(Context.velocity.x * Context.lastHorizontalInput, Context.rigidbody2D.velocity.y);
-            }
         }
 
-        public override void ExitState()
-        { }
-
-        public override void CheckSwitchStates()
+        protected override void OnLeave()
         {
-            if (Context.PlayerApplicable.MoveState)
-            {
-                SwitchState(StateFactory.Move());
-            }
+            
         }
 
-        public override void InitializeSubState()
-        { }
+        protected override void OnUpdate()
+        {
+            
+        }
+
+        protected override void CanUpdateState()
+        {
+            if (Context.Input.JumpBufferAvailable && Context.CoyoteTimeAvailable)
+            {
+                SwitchState(Factory.Jump()); 
+            }
+
+            if (Context.rigid.velocity.y < 0.0f)
+            {
+                SwitchState(Factory.Fall());
+            }
+
+            if (Context.Input.Direction.x != 0.0f)
+            {
+                SwitchState(Factory.Move());
+            }
+        }
     }
 }

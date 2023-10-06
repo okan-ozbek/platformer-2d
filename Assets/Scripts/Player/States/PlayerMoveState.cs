@@ -1,43 +1,48 @@
-﻿using Player.Factory;
+using System;
+using Player.Factories;
 using UnityEngine;
 
 namespace Player.States
 {
-    public class PlayerMoveState : PlayerBaseState
+    public sealed class PlayerMoveState : PlayerBaseState
     {
-        public PlayerMoveState(PlayerContext context, PlayerStateFactory stateFactory) : base(context, stateFactory) { }
+        public PlayerMoveState(PlayerStateMachine context, PlayerStateFactory factory) : base(context, factory) { }
         
-        public override void EnterState()
-        { }
+        private Vector2 _lastDirection;
 
-        public override void UpdateState()
+        protected override void OnEnter()
         {
-            CheckSwitchStates();
             
-            Context.velocity.x += Context.HorizontalAcceleration * Time.fixedDeltaTime;
-            Context.velocity.x = Mathf.Min(Context.velocity.x, Context.MaxHorizontalVelocity);
-            
-            if (Mathf.RoundToInt(Context.lastHorizontalInput) != Mathf.RoundToInt(Context.PlayerInput.InputDirection.x))
-            {
-                Context.lastHorizontalInput = Context.PlayerInput.InputDirection.x;
-                Context.velocity.x *= 0.3f;
-            }
-            
-            Context.SetVelocity(Context.velocity.x * Context.PlayerInput.InputDirection.x, Context.rigidbody2D.velocity.y);
         }
 
-        public override void ExitState()
-        { }
-
-        public override void CheckSwitchStates()
+        protected override void OnLeave()
         {
-            if (Context.PlayerApplicable.IdleState)
+            
+        }
+
+        protected override void OnUpdate()
+        {
+            Context.Movement.Update(Context);
+        }
+
+        protected override void CanUpdateState()
+        {
+            if (Context.Input.JumpBufferAvailable && Context.CoyoteTimeAvailable)
             {
-                SwitchState(StateFactory.Idle());
+                SwitchState(Factory.Jump());
+            }
+
+            if (Context.rigid.velocity.y < 0.0f)
+            {
+                SwitchState(Factory.Fall());
+            }
+            
+            if (Context.Input.Direction.x == 0.0f && Context.velocity.x == 0.0f)
+            {
+                SwitchState(Factory.Idle());
             }
         }
 
-        public override void InitializeSubState()
-        { }
+        
     }
 }

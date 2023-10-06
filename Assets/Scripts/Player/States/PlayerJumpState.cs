@@ -1,59 +1,54 @@
-﻿using Player.Factory;
+using Player.Factories;
 using UnityEngine;
 
 namespace Player.States
 {
     public sealed class PlayerJumpState : PlayerBaseState
     {
-        public PlayerJumpState(PlayerContext context, PlayerStateFactory stateFactory) : base(context, stateFactory)
-        {
-            IsRootState = true;
-            InitializeSubState();
-        }
+        public PlayerJumpState(PlayerStateMachine context, PlayerStateFactory factory) : base(context, factory) { }
+
+        private const float UpwardForce = 10.0f;
+
+        private Vector2 _lastDirection;
         
-        public override void EnterState()
+        protected override void OnEnter()
         {
-            Context.SetGravityScale(Context.BaseGravityScale);
+            Context.SetGravityScale();
             
-            Context.SetVelocity(Context.rigidbody2D.velocity.x, Context.UpwardForce);
-            
-            Context.PlayerInput.JumpBufferTimer = 0.0f;
+            Context.SetVelocity(Context.velocity.x * _lastDirection.x, UpwardForce);
+
+            Context.Input.DisableJumpBuffer();
+            Context.DisableCoyoteTime();
         }
 
-        public override void UpdateState()
+        protected override void OnLeave()
         {
-            CheckSwitchStates();
-            
-            if (Context.PlayerInput.ReleasedSpace && Context.rigidbody2D.velocity.y > 0.0f)
-            {
-                Context.SetVelocity(Context.rigidbody2D.velocity.x, Context.rigidbody2D.velocity.y * 0.5f);
-
-                Context.PlayerInput.JumpBufferTimer = 0.0f;
-            }
-        }
-
-        public override void ExitState()
-        { }
-
-        public override void CheckSwitchStates()
-        {
-            if (Context.PlayerApplicable.GroundedState)
-            {
-                SwitchState(StateFactory.Grounded());
-            }
             
         }
 
-        public override void InitializeSubState()
+        protected override void OnUpdate()
         {
-            if (Context.PlayerApplicable.MoveState)
+            if (Context.Input.ReleasedSpace)
             {
-                SetSubState(StateFactory.Move());
+                Context.SetVelocity(Context.velocity.x * _lastDirection.x, Context.rigid.velocity.y * 0.5f);
+            }
+            
+            Context.Movement.Update(Context);
+        }
+
+        protected override void CanUpdateState()
+        {
+            if (Context.rigid.velocity.y < 0.0f)
+            {
+                SwitchState(Factory.Fall());
             }
 
-            if (Context.PlayerApplicable.IdleState)
-            {
-                SetSubState(StateFactory.Idle());
+            if (
+                (Context.Input.JumpBufferAvailable || Context.Input.PressedSpace) &&
+                Context.Input.Direction.x != 0.0f &&
+                Context.canDash
+            ) {
+                SwitchState(Factory.Dash());
             }
         }
     }

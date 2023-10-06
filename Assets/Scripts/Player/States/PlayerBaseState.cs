@@ -1,59 +1,42 @@
-﻿using Player.Factory;
+using Player.Factories;
 
 namespace Player.States
 {
     public abstract class PlayerBaseState
     {
-        protected bool IsRootState;
-        protected readonly PlayerContext Context;
-        protected readonly PlayerStateFactory StateFactory;
+        protected PlayerStateMachine Context;
+        protected PlayerStateFactory Factory;
 
-        private PlayerBaseState _currentSubState;
-        private PlayerBaseState _currentSuperState;
-        
-        public PlayerBaseState(PlayerContext context, PlayerStateFactory stateFactory)
+        protected PlayerBaseState(PlayerStateMachine context, PlayerStateFactory factory)
         {
             Context = context;
-            StateFactory = stateFactory;
+            Factory = factory;
         }
         
-        public abstract void EnterState();
-        public abstract void UpdateState();
-        public abstract void ExitState();
-        public abstract void CheckSwitchStates();
-        public abstract void InitializeSubState();
+        protected abstract void OnEnter();
+        protected abstract void OnLeave();
+        protected abstract void OnUpdate();
 
-        public void UpdateStates()
+        protected abstract void CanUpdateState();
+        
+        protected void SwitchState(PlayerBaseState state)
         {
-            CheckSwitchStates();
-            _currentSubState?.UpdateStates();
-        }
+            OnLeave();
 
-        protected void SwitchState(PlayerBaseState newState)
-        {
-            ExitState();
+            Context.State = state;
             
-            newState.EnterState();
-
-            if (IsRootState)
-            {
-                Context.PlayerState = newState;    
-            } 
-            else
-            {
-                _currentSuperState?.SetSubState(newState);
-            }
+            state.OnEnter();
         }
 
-        private void SetSuperState(PlayerBaseState newSuperState)
+        public void Initialize()
         {
-            _currentSuperState = newSuperState;
+            OnEnter();
         }
 
-        protected void SetSubState(PlayerBaseState newSubState)
+        public void Update()
         {
-            _currentSubState = newSubState;
-            newSubState.SetSuperState(this);
+            CanUpdateState();
+            OnUpdate();
         }
     }
 }
