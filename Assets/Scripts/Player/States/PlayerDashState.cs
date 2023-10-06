@@ -9,10 +9,10 @@ namespace Player.States
 
         private const float NoGravity = 0.0f;
         private const float MaxDashTime = 0.15f;
-        private const float DashPower = 8.0f;
 
         private Vector2 _direction;
         private float _dashTimer;
+        private float _horizontalDashMultiplier = 1.4f;
 
         protected override void OnEnter()
         {
@@ -33,7 +33,13 @@ namespace Player.States
         {
             if (!ExceededMaxDashTime())
             {
-                Context.SetVelocity(_direction * DashPower);
+                Vector2 dash = _direction * Context.dashPower;
+                
+                dash = (_direction.y == 0.0f)
+                    ? dash * _horizontalDashMultiplier
+                    : dash;
+                
+                Context.SetVelocity(dash);
                 _dashTimer += Time.deltaTime;
             }
             else

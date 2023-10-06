@@ -1,5 +1,6 @@
 using Player.Factories;
 using Player.States;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Player
@@ -10,21 +11,24 @@ namespace Player
         public bool CoyoteTimeAvailable { get; private set; }
 
         private const float DefaultCoyoteTime = 0.1f;
-        public const float HorizontalDeceleration = 8.0f;
-        public const float HorizontalAcceleration = 10.0f;
-        public const float MaxHorizontalVelocity = 5.0f;
-        public const float MaxDownwardVelocity = -20.0f;
         
-        public PlayerBaseState State;
-        public PlayerInput Input;
-        public PlayerMovement Movement;
-        public Rigidbody2D rigid;
+        public float horizontalDeceleration = 16.0f;
+        public float horizontalAcceleration = 9.0f;
+        public float maxHorizontalVelocity = 4.0f;
+        public float maxDownwardVelocity = -20.0f;
+        public float dashPower = 10.0f;
+        public float upwardForce = 10.0f;
+        
+        [HideInInspector] public PlayerBaseState State;
+        [HideInInspector] public PlayerInput Input;
+        [HideInInspector] public PlayerMovement Movement;
+        [HideInInspector] public Rigidbody2D rigid;
 
-        public bool canDash;
-        public bool grounded;
-        public float defaultGravityScale;
-        public LayerMask environmentLayer;
-        public Vector2 velocity;
+        [HideInInspector] public bool canDash;
+        [HideInInspector] public bool grounded;
+        [HideInInspector] public float defaultGravityScale;
+        [HideInInspector] public LayerMask environmentLayer;
+        [HideInInspector] public Vector2 velocity;
         
         private float _coyoteBufferTimer;
         

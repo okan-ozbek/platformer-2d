@@ -6,16 +6,14 @@ namespace Player.States
     public sealed class PlayerJumpState : PlayerBaseState
     {
         public PlayerJumpState(PlayerStateMachine context, PlayerStateFactory factory) : base(context, factory) { }
-
-        private const float UpwardForce = 10.0f;
-
+        
         private Vector2 _lastDirection;
         
         protected override void OnEnter()
         {
             Context.SetGravityScale();
             
-            Context.SetVelocity(Context.velocity.x * _lastDirection.x, UpwardForce);
+            Context.SetVelocity(Context.velocity.x * _lastDirection.x, Context.upwardForce);
 
             Context.Input.DisableJumpBuffer();
             Context.DisableCoyoteTime();

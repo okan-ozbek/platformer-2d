@@ -8,8 +8,6 @@ namespace Player.States
     {
         public PlayerMoveState(PlayerStateMachine context, PlayerStateFactory factory) : base(context, factory) { }
         
-        private Vector2 _lastDirection;
-
         protected override void OnEnter()
         {
             

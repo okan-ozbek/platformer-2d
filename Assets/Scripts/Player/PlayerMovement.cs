@@ -17,8 +17,8 @@ namespace Player
         
         private void Move(PlayerStateMachine context)
         {
-            context.velocity.x += PlayerStateMachine.HorizontalAcceleration * Time.deltaTime;
-            context.velocity.x = Mathf.Min(context.velocity.x, PlayerStateMachine.MaxHorizontalVelocity);
+            context.velocity.x += context.horizontalAcceleration * Time.deltaTime;
+            context.velocity.x = Mathf.Min(context.velocity.x, context.maxHorizontalVelocity);
             
             if (Mathf.RoundToInt(_lastDirection.x) != Mathf.RoundToInt(context.Input.Direction.x))
             {
@@ -32,7 +32,7 @@ namespace Player
 
         private void Brake(PlayerStateMachine context)
         {
-            context.velocity.x -= PlayerStateMachine.HorizontalDeceleration * Time.deltaTime;
+            context.velocity.x -= context.horizontalDeceleration * Time.deltaTime;
             context.velocity.x = Mathf.Max(context.velocity.x, 0.0f);
         
             context.SetVelocity(context.velocity.x * _lastDirection.x, context.rigid.velocity.y);

@@ -24,7 +24,7 @@ namespace Player.States
         {
             Context.SetVelocity(
                 Context.velocity.x * _lastDirection.x, 
-                Mathf.Max(Context.rigid.velocity.y, PlayerStateMachine.MaxDownwardVelocity)
+                Mathf.Max(Context.rigid.velocity.y, Context.maxDownwardVelocity)
             );
             
             Context.Movement.Update(Context);
