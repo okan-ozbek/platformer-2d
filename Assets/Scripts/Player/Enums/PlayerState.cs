@@ -7,5 +7,7 @@ namespace Player.Enums
         Idle,
         Jump,
         Move,
+        WallSlide,
+        WallJump,
     }
 }

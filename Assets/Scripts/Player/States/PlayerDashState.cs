@@ -9,17 +9,17 @@ namespace Player.States
 
         private const float NoGravity = 0.0f;
         private const float MaxDashTime = 0.15f;
+        private const float HorizontalDashMultiplier = 1.4f;
 
         private Vector2 _direction;
         private float _dashTimer;
-        private float _horizontalDashMultiplier = 1.4f;
-
+        private Vector2 _inputDirectionNormalized;
+        
         protected override void OnEnter()
         {
             Context.canDash = false;
-            
-            _direction = Context.Input.Direction.normalized;
             _dashTimer = 0.0f;
+            _inputDirectionNormalized = Context.Input.DirectionNormalized;
             
             Context.SetGravityScale(NoGravity);
         }
@@ -33,10 +33,10 @@ namespace Player.States
         {
             if (!ExceededMaxDashTime())
             {
-                Vector2 dash = _direction * Context.dashPower;
-                
-                dash = (_direction.y == 0.0f)
-                    ? dash * _horizontalDashMultiplier
+                Vector2 dash = _inputDirectionNormalized * Context.dashPower;
+
+                dash = (_inputDirectionNormalized.y == 0.0f)
+                    ? dash * HorizontalDashMultiplier
                     : dash;
                 
                 Context.SetVelocity(dash);

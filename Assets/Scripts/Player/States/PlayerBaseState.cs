@@ -35,8 +35,8 @@ namespace Player.States
 
         public void Update()
         {
-            CanUpdateState();
             OnUpdate();
+            CanUpdateState();
         }
     }
 }

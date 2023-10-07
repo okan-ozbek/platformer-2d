@@ -23,9 +23,10 @@ namespace Player
             if (Mathf.RoundToInt(_lastDirection.x) != Mathf.RoundToInt(context.Input.Direction.x))
             {
                 _lastDirection.x = context.Input.Direction.x;
-
                 context.velocity.x *= 0.3f;
             }
+            
+            Flip(context);
 
             context.SetVelocity(context.velocity.x * _lastDirection.x, context.rigid.velocity.y);
         }
@@ -36,6 +37,17 @@ namespace Player
             context.velocity.x = Mathf.Max(context.velocity.x, 0.0f);
         
             context.SetVelocity(context.velocity.x * _lastDirection.x, context.rigid.velocity.y);
+        }
+
+        private void Flip(PlayerStateMachine context)
+        {
+            Vector3 localScale = context.transform.localScale;
+
+            localScale.x = (Mathf.Abs(context.Input.Direction.x) > 0.0f)
+                ? context.scale.x * Mathf.Sign(context.Input.Direction.x)
+                : localScale.x;
+
+            context.transform.localScale = localScale;
         }
     }
 }

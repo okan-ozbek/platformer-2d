@@ -40,7 +40,5 @@ namespace Player.States
                 SwitchState(Factory.Idle());
             }
         }
-
-        
     }
 }

@@ -8,11 +8,15 @@ namespace Player.States
     {
         public PlayerFallState(PlayerStateMachine context, PlayerStateFactory factory) : base(context, factory) { }
 
+        private const float FallGravity = 2.0f;
+        
         private Vector2 _lastDirection;
         private float _fallGravityScale;
 
         protected override void OnEnter()
         {
+            Context.SetGravityScale(Context.rigid.gravityScale * FallGravity);
+            
         }
 
         protected override void OnLeave()
@@ -40,6 +44,13 @@ namespace Player.States
             if (Context.grounded && Context.rigid.velocity.x == 0.0f) 
             {
                 SwitchState(Factory.Idle());
+            }
+            
+            if (
+                Context.wallCollision &&
+                Context.Input.Direction.x != 0.0f
+            ) {
+                SwitchState(Factory.WallSlide());
             }
 
             if (

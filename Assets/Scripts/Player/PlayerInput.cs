@@ -5,6 +5,7 @@ namespace Player
     public sealed class PlayerInput
     {
         public Vector2 Direction { get; private set; }
+        public Vector2 DirectionNormalized { get; private set; }
         public Vector2 LastDirection { get; private set; }
         
         public bool PressedSpace { get; private set; }
@@ -17,6 +18,7 @@ namespace Player
         public void Update()
         {
             Direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            DirectionNormalized = Direction.normalized;
 
             PressedSpace = Input.GetKeyDown(KeyCode.Space);
             ReleasedSpace = Input.GetKeyUp(KeyCode.Space);

@@ -1,25 +1,32 @@
-using Player.Factories;
+﻿using Player.Factories;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 
 namespace Player.States
 {
-    public sealed class PlayerJumpState : PlayerBaseState
+    public sealed class PlayerWallJumpState : PlayerBaseState
     {
-        public PlayerJumpState(PlayerStateMachine context, PlayerStateFactory factory) : base(context, factory) { }
+        public PlayerWallJumpState(PlayerStateMachine context, PlayerStateFactory factory) : base(context, factory)
+        {
+        }
 
         private const float NoMovementTime = 0.1f;
         
         private float _noMovementTimer;
-        
+        private Vector2 _wallJumpingPower;
+
         protected override void OnEnter()
         {
-            Context.SetGravityScale();
-            
-            Context.SetVelocity(Context.velocity.x * Context.Input.LastDirection.x, Context.upwardForce);
+            _wallJumpingPower = Context.wallJumpingPower;
+            Context.velocity = _wallJumpingPower;
 
-            Context.Input.DisableJumpBuffer();
-            Context.DisableCoyoteTime();
+            float horizontalForceDirection = (Context.wallCollision)
+                ? -Mathf.Sign(Context.transform.localScale.x)
+                : Mathf.Sign(Context.transform.localScale.x);
             
+            Context.rigid.velocity = new Vector2(Context.velocity.x * horizontalForceDirection, Context.velocity.y);
+
+            Context.DisableWallJumpTime();
             _noMovementTimer = NoMovementTime;
         }
 
@@ -29,11 +36,6 @@ namespace Player.States
 
         protected override void OnUpdate()
         {
-            if (Context.Input.ReleasedSpace)
-            {
-                Context.SetVelocity(Context.velocity.x * Context.Input.LastDirection.x, Context.rigid.velocity.y * 0.5f);
-            }
-            
             if (_noMovementTimer <= 0.0f)
             {
                 Context.Movement.Update(Context);    
