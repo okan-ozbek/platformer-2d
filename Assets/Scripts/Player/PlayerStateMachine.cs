@@ -17,9 +17,9 @@ namespace Player
         public Transform groundCheck;
         public Transform wallCheck;
         public LayerMask environmentLayer;
+        public LayerMask deathLayer;
         public GameObject dashGameObject;
-        
-        
+
         public float horizontalDeceleration = 16.0f;
         public float horizontalAcceleration = 9.0f;
         public float maxHorizontalVelocity = 4.0f;
@@ -28,6 +28,7 @@ namespace Player
         public float upwardForce = 10.0f;
         public float wallSlideVelocity = -1.5f;
         public Vector2 wallJumpingPower = new(8, 16);
+        public Vector3 spawnPosition;
         
         public bool DEBUG_RESET_STATE = false;
 
@@ -38,14 +39,17 @@ namespace Player
         [HideInInspector] public PlayerStateFactory Factory;
         [HideInInspector] public Rigidbody2D rigid;
         [HideInInspector] public Animator anim;
+        [HideInInspector] public SpriteRenderer sprite;
         
         [HideInInspector] public bool canDash;
         [HideInInspector] public bool grounded;
         [HideInInspector] public bool wallCollision;
+        [HideInInspector] public bool deathCollision;
         [HideInInspector] public float defaultGravityScale;
         [HideInInspector] public Vector2 velocity;
         [HideInInspector] public Vector3 scale;
         [HideInInspector] public ParticleSystem dashParticleSystem;
+        [HideInInspector] public PlayerDeathManager deathManager;
 
         private float _coyoteBufferTimer;
         private float _wallJumpBufferTimer;
@@ -59,7 +63,9 @@ namespace Player
             
             rigid = GetComponent<Rigidbody2D>();
             anim = GetComponent<Animator>();
+            sprite = GetComponent<SpriteRenderer>();
             dashParticleSystem = dashGameObject.GetComponent<ParticleSystem>();
+            deathManager = GetComponent<PlayerDeathManager>();
             
             defaultGravityScale = rigid.gravityScale;
 
@@ -69,6 +75,7 @@ namespace Player
             scale = transform.localScale;
 
             dashParticleSystem.Stop();
+            spawnPosition = transform.position;
         }
 
         private void Update()
@@ -79,7 +86,7 @@ namespace Player
             SetCoyoteTime();
             SetWallJumpTime();
             ResetDash();
-
+            
             Debug.Log(State.GetType());
             
             if (DEBUG_RESET_STATE)
@@ -93,6 +100,7 @@ namespace Player
         {
             grounded = GetGrounded();
             wallCollision = GetWallCollision();
+            deathCollision = GetDeathCollision();
         }
 
         private bool GetGrounded()
@@ -100,6 +108,16 @@ namespace Player
             const float collisionDetectionRadius = 0.125f;
 
             return Physics2D.OverlapCircle(groundCheck.position, collisionDetectionRadius, environmentLayer);
+        }
+        
+        private bool GetDeathCollision()
+        {
+            const float collisionDetectionRadius = 0.125f;
+
+            return (
+                Physics2D.OverlapCircle(groundCheck.position, collisionDetectionRadius, deathLayer) ||
+                    transform.position.y < -30.0f
+                );
         }
 
         private bool GetWallCollision()

@@ -17,6 +17,7 @@ namespace Player.Factories
             _states.Add(PlayerState.Move, new PlayerMoveState(context, this));
             _states.Add(PlayerState.WallSlide, new PlayerWallSlideState(context, this));
             _states.Add(PlayerState.WallJump, new PlayerWallJumpState(context, this));
+            _states.Add(PlayerState.Death, new PlayerDeathState(context, this));
         }
 
         public PlayerBaseState Dash()
@@ -52,6 +53,11 @@ namespace Player.Factories
         public PlayerBaseState WallJump()
         {
             return _states[PlayerState.WallJump];
+        }
+        
+        public PlayerBaseState Death()
+        {
+            return _states[PlayerState.Death];
         }
     }
 }

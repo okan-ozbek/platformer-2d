@@ -9,5 +9,6 @@ namespace Player.Enums
         Move,
         WallSlide,
         WallJump,
+        Death,
     }
 }

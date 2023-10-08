@@ -37,6 +37,11 @@ namespace Player.States
 
         protected override void CanUpdateState()
         {
+            if (Context.deathCollision)
+            {
+                SwitchState(Factory.Death());
+            }
+            
             if (Context.grounded && Mathf.Abs(Context.rigid.velocity.x) > 0.0f)
             {
                 SwitchState(Factory.Move());

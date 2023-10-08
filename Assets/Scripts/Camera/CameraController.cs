@@ -10,9 +10,12 @@ namespace Camera
 
         private void LateUpdate()
         {
-            Vector3 targetPosition = new Vector3(player.position.x, player.position.y, -1.0f);
+            if (player.transform.position.y > -25.0f)
+            {
+                Vector3 targetPosition = new Vector3(player.position.x, player.position.y, -1.0f);
 
-            transform.position = Vector3.Slerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
+                transform.position = Vector3.Slerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
+            }
         }
     }
 }
