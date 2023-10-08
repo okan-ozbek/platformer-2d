@@ -1,3 +1,4 @@
+using Player.Enums;
 using Player.Factories;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ namespace Player.States
         
         protected override void OnEnter()
         {
+            Context.Animation.ChangeAnimation(Context, PlayerAnimationState.Jump);
             Context.SetGravityScale();
             
             Context.SetVelocity(Context.velocity.x * Context.Input.LastDirection.x, Context.upwardForce);

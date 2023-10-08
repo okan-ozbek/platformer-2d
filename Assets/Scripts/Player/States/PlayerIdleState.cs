@@ -1,3 +1,4 @@
+using Player.Enums;
 using Player.Factories;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace Player.States
 
         protected override void OnEnter()
         {
-            
+            Context.Animation.ChangeAnimation(Context, PlayerAnimationState.Idle);
         }
 
         protected override void OnLeave()

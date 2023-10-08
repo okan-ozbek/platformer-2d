@@ -14,19 +14,25 @@ namespace Player.States
         private Vector2 _direction;
         private float _dashTimer;
         private Vector2 _inputDirectionNormalized;
+        private ParticleSystemRenderer _particleSystemRenderer;
         
         protected override void OnEnter()
         {
+            _particleSystemRenderer = Context.dashGameObject.GetComponent<ParticleSystemRenderer>();
+            
             Context.canDash = false;
             _dashTimer = 0.0f;
             _inputDirectionNormalized = Context.Input.DirectionNormalized;
-            
+
+            _particleSystemRenderer.flip = Vector3.right * Mathf.Sign(_inputDirectionNormalized.x);
+            Context.dashParticleSystem.Play();
+
             Context.SetGravityScale(NoGravity);
         }
 
         protected override void OnLeave()
         {
-            
+            Context.dashParticleSystem.Stop();
         }
 
         protected override void OnUpdate()

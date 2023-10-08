@@ -15,6 +15,7 @@ namespace Player.States
 
         protected override void OnEnter()
         {
+            Context.Animation.ChangeAnimation(Context, PlayerAnimationState.Fall);
             Context.SetGravityScale(Context.rigid.gravityScale * FallGravity);
             
         }

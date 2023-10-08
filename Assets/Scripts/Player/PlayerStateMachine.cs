@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Player
 {
-    [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
+    [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(Animator))]
     public sealed class PlayerStateMachine : MonoBehaviour
     {
         public bool CoyoteTimeAvailable { get; private set; }
@@ -12,6 +12,12 @@ namespace Player
 
         private const float DefaultCoyoteTime = 0.1f;
         private const float DefaultWallJumpTime = 0.1f;
+
+        public Transform groundCheck;
+        public Transform wallCheck;
+        public LayerMask environmentLayer;
+        public GameObject dashGameObject;
+        
         
         public float horizontalDeceleration = 16.0f;
         public float horizontalAcceleration = 9.0f;
@@ -20,24 +26,25 @@ namespace Player
         public float dashPower = 10.0f;
         public float upwardForce = 10.0f;
         public float wallSlideVelocity = -1.5f;
-        public Vector2 wallJumpingPower = new Vector2(8, 16);
+        public Vector2 wallJumpingPower = new(8, 16);
         
         public bool DEBUG_RESET_STATE = false;
 
         [HideInInspector] public PlayerBaseState State;
         [HideInInspector] public PlayerInput Input;
         [HideInInspector] public PlayerMovement Movement;
+        [HideInInspector] public PlayerAnimation Animation;
         [HideInInspector] public PlayerStateFactory Factory;
         [HideInInspector] public Rigidbody2D rigid;
+        [HideInInspector] public Animator anim;
         
         [HideInInspector] public bool canDash;
         [HideInInspector] public bool grounded;
         [HideInInspector] public bool wallCollision;
         [HideInInspector] public float defaultGravityScale;
-        [HideInInspector] public LayerMask environmentLayer;
         [HideInInspector] public Vector2 velocity;
         [HideInInspector] public Vector3 scale;
-        [HideInInspector] public float wallJumpDirection;
+        [HideInInspector] public ParticleSystem dashParticleSystem;
 
         private float _coyoteBufferTimer;
         private float _wallJumpBufferTimer;
@@ -46,15 +53,21 @@ namespace Player
         {
             Input = new PlayerInput();
             Movement = new PlayerMovement();
+            Animation = new PlayerAnimation();
             Factory = new PlayerStateFactory(this);
+            
             rigid = GetComponent<Rigidbody2D>();
-
+            anim = GetComponent<Animator>();
+            dashParticleSystem = dashGameObject.GetComponent<ParticleSystem>();
+            
             defaultGravityScale = rigid.gravityScale;
 
             State = Factory.Fall();
             State.Initialize();
 
             scale = transform.localScale;
+
+            dashParticleSystem.Stop();
         }
 
         private void Update()
@@ -66,6 +79,8 @@ namespace Player
             SetWallJumpTime();
             ResetDash();
 
+            Debug.Log(State.GetType());
+            
             if (DEBUG_RESET_STATE)
             {
                 State = Factory.Idle();
@@ -82,21 +97,15 @@ namespace Player
         private bool GetGrounded()
         {
             const float collisionDetectionRadius = 0.125f;
-            
-            Vector3 feetPosition = transform.position;
-            feetPosition.y -= transform.localScale.y * 0.5f;
 
-            return Physics2D.OverlapCircle(feetPosition, collisionDetectionRadius, environmentLayer);
+            return Physics2D.OverlapCircle(groundCheck.position, collisionDetectionRadius, environmentLayer);
         }
 
         private bool GetWallCollision()
         {
             const float collisionDetectionRadius = 0.1f;
-            
-            Vector3 offset = Vector3.right * (scale.x * 0.5f) * Mathf.Sign(transform.localScale.x);
-            Vector3 position = transform.position + offset;
 
-            return Physics2D.OverlapCircle(position, collisionDetectionRadius, environmentLayer);
+            return Physics2D.OverlapCircle(wallCheck.position, collisionDetectionRadius, environmentLayer);
         }
 
         private void SetCoyoteTime()
@@ -154,12 +163,10 @@ namespace Player
         
         private void OnDrawGizmos()
         {
-            const float collisionDetectionRadius = 0.25f;
+            const float collisionDetectionRadius = 0.125f;
 
-            Vector3 offset = Vector3.right * (scale.x * 0.5f) * Mathf.Sign(transform.localScale.x);
-            Vector3 position = transform.position + offset;
-
-            Gizmos.DrawCube(position, Vector3.one * collisionDetectionRadius);
+            Gizmos.DrawCube(wallCheck.position, Vector3.one * collisionDetectionRadius);
+            Gizmos.DrawCube(groundCheck.position, Vector3.one * collisionDetectionRadius);
         }
     }
 }

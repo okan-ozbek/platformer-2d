@@ -1,4 +1,5 @@
-﻿using Player.Factories;
+﻿using Player.Enums;
+using Player.Factories;
 using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 
@@ -17,6 +18,8 @@ namespace Player.States
 
         protected override void OnEnter()
         {
+            Context.Animation.ChangeAnimation(Context, PlayerAnimationState.Jump);
+            
             _wallJumpingPower = Context.wallJumpingPower;
             Context.velocity = _wallJumpingPower;
 

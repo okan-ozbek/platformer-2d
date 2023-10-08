@@ -1,4 +1,5 @@
-﻿using Player.Factories;
+﻿using Player.Enums;
+using Player.Factories;
 using UnityEngine;
 
 namespace Player.States
@@ -11,7 +12,7 @@ namespace Player.States
 
         protected override void OnEnter()
         {
-            
+            Context.Animation.ChangeAnimation(Context, PlayerAnimationState.Slide);
         }
 
         protected override void OnLeave()
