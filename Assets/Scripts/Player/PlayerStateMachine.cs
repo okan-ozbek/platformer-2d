@@ -10,6 +10,7 @@ namespace Player
         public bool CoyoteTimeAvailable { get; private set; }
         public bool WallJumpAvailable { get; private set; }
 
+        public const float FallThreshold = 0.15f;
         private const float DefaultCoyoteTime = 0.1f;
         private const float DefaultWallJumpTime = 0.1f;
 

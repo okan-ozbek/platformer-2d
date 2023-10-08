@@ -36,9 +36,7 @@ namespace Player.States
                         : Factory.Move()
                 );
             }
-            
-            Debug.Log(Context.WallJumpAvailable);
-            
+
             if (
                 !Context.grounded &&
                 Context.rigid.velocity.y < 0.0f &&

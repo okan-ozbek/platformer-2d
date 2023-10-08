@@ -30,7 +30,7 @@ namespace Player.States
                 SwitchState(Factory.Jump()); 
             }
 
-            if (Context.rigid.velocity.y < 0.0f)
+            if (Context.rigid.velocity.y < (0.0f - PlayerStateMachine.FallThreshold))
             {
                 SwitchState(Factory.Fall());
             }

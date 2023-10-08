@@ -33,6 +33,8 @@ namespace Player.States
         protected override void OnLeave()
         {
             Context.dashParticleSystem.Stop();
+            Context.SetGravityScale();
+            Context.SetVelocity(Context.rigid.velocity.x, Context.rigid.velocity.y * 0.5f);
         }
 
         protected override void OnUpdate()
@@ -65,7 +67,7 @@ namespace Player.States
                 );
             }
 
-            if (ExceededMaxDashTime() && Context.rigid.velocity.y < 0.0f)
+            if (ExceededMaxDashTime() && Context.rigid.velocity.y < (0.0f - PlayerStateMachine.FallThreshold))
             {
                 SwitchState(Factory.Fall());
             }
